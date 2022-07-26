@@ -10,21 +10,21 @@ import {
   Text,
 } from "react-native";
 
-{
-  /*External dependencies */
-}
+//externals dependencies
 import Textarea from "react-native-textarea";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { Picker } from "@react-native-picker/picker";
 import moment from "moment";
 import { Entypo } from "@expo/vector-icons";
-import { ViewPropTypes } from "deprecated-react-native-prop-types";
-// import Firebase from "../Firebase/Firebase";
-{
-  /*External dependencies */
-}
+// end externals dependencies
 
+
+
+///Firebase end
 import { Colors } from "../colors"; //colors change color button
+import { database } from "../Firebase/Firebase";
+import { collection,addDoc} from "firebase/firestore";
+import { async } from "@firebase/util";
 
 const CreateUserScreen = () => {
   const [state, setState] = useState({
@@ -43,18 +43,26 @@ const CreateUserScreen = () => {
     //recibira un nombre y un valor estableciendo el nombre y valor recibido y actualizando
   };
 
+///sendData
+  const sendData = async () => {
+  await  addDoc(collection(database,'actas'),{  name: state.name,
+      typeVehicle: state.typeVehicle,
+      plaque: state.plaque,}),
+    console.log("success"+state)
+  }
+/// sendData
+
   //saveNewUser
   const saveNewUser = () => {
-    if (
-      state.name === "" ||
-      state.hour === "" ||
-      state.date === "" ||
+    if ( state.name === ""||
+      // state.hour === "" ||
+      // state.date === "" ||
       state.typeVehicle === "" ||
       state.plaque === "" ||
       state.color === "" ||
       state.description === ""
     ) {
-      ToastAndroid.show("please provide values!", ToastAndroid.SHORT);
+      ToastAndroid.show("Porfavor proporciona datos validos!", ToastAndroid.SHORT);
     } else {
       Alert.alert("Confirmar", "Desea guardar los cambios actuales?", [
         {
@@ -63,10 +71,11 @@ const CreateUserScreen = () => {
           style: "cancel",
         },
         {
-          text: "OK",
-          onPress: () => ToastAndroid.show("success!", ToastAndroid.SHORT),
-        }, //Firebase.db.collection('')
-        console.log(state),
+          text: "OK", 
+          onPress: () => ( sendData(),ToastAndroid.show("cancel!", ToastAndroid.SHORT)),
+          style: "success"}, 
+          
+       
       ]);
     }
   }; //end saveNewUser
@@ -88,17 +97,21 @@ const CreateUserScreen = () => {
   };
   /// end Modal TimePickerModal
 
-  const [selectedValue, setSelectedValue] = useState();
-
+///Update Colony
+  const [selectedColony, setSelectedColony] = useState();
   const updatePickerColony = (itemValue, itemIndex, name, value) => {
     handleChangeText("colony", itemValue);
-    setSelectedValue1(itemValue);
+    setSelectedColony(itemValue);
   };
-  const [selectedValue1, setSelectedValue1] = useState();
+//Update Colony
+
+//Update TypeVehicle
+  const [selectedVehicle, setSelectedVehicle] = useState();
   const updatePickerTypeVehicle = (itemValue1, itemIndex, name, value) => {
     handleChangeText("typeVehicle", itemValue1);
-    setSelectedValue1(itemValue1);
+    setSelectedVehicle(itemValue1);
   };
+
 
   ///update
   return (
@@ -123,7 +136,7 @@ const CreateUserScreen = () => {
         >
           Fecha:{"\n"}
           {selectedDate
-            ? moment(selectedDate).format('ll')
+            ? moment(selectedDate).format("ll")
             : "Fecha no seleccionada"}{" "}
         </TextInput>
         {/*toLocaleDateString  works for get date and ('en-GB') its the format to show date*/}
@@ -131,15 +144,15 @@ const CreateUserScreen = () => {
         <TextInput editable={false} style={styles.textDate}>
           Hora:{"\n"}
           {selectedDate
-            ? moment(selectedDate).format('LT')
-            :"Fecha no seleccionada"}
+            ? moment(selectedDate).format("LT")
+            : "Fecha no seleccionada"}
           {/*toLocaleDateString  works for get date and ('en-GB') its the format to show date*/}
         </TextInput>
         <Button
           title="Selecciona la fecha y hora"
           onPress={showDatePicker}
           color={Colors.secondary}
-          onValueChange={()=>{}}
+          onValueChange={() => {}}
         />
         <DateTimePickerModal
           isVisible={isDatePickerVisible}
@@ -154,7 +167,7 @@ const CreateUserScreen = () => {
       <View>
         <TextInput placeholder="Selecciona la colonia" editable={false} />
         <Picker
-          selectedValue={selectedValue}
+          selectedValue={selectedColony}
           onValueChange={(itemValue, itemIndex, name, value) =>
             updatePickerColony(itemValue, itemIndex, name, value)
           }
@@ -171,9 +184,9 @@ const CreateUserScreen = () => {
           editable={false}
         />
         <Picker
-          selectedValue={selectedValue1}
-          onValueChange={(itemValue1, itemIndex, name, value) =>
-            updatePickerTypeVehicle(itemValue1, itemIndex, name, value)
+          selectedValue={selectedVehicle}
+          onValueChange={(itemValue1, itemIndex1, name, value) =>
+            updatePickerTypeVehicle(itemValue1, itemIndex1, name, value)
           }
           // onValueChange={(itemValue, itemIndex) => this.setState({typeVehicle:itemValue})}
         >

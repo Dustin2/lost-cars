@@ -39,15 +39,14 @@ export default function App() {
           headerTitleStyle: {
             fontWeight: "bold",
           },
-          //change color to active and inactive 
-          drawerActiveBackgroundColor: '#6685A4' ,
+          //change color to active and inactive
+          drawerActiveBackgroundColor: "#6685A4",
           drawerActiveTintColor: "#333",
           drawerInactiveTintColor: "#fff",
-         
         }}
       >
         <Menu.Screen
-          name="Inicio"
+          name="Actas recientes"
           component={Inicio}
           options={{
             drawerIcon: ({ color }) => (
@@ -55,22 +54,7 @@ export default function App() {
             ),
           }}
         />
-        <Menu.Screen
-          name="Contacto"
-          component={Contacto}
-          options={{
-            drawerIcon: ({ color }) => (
-              <Ionicons name="settings-outline" size={22} color={color} />
-            ),
-            ///this use for change color of header
 
-            //the  above lines make it work the icons in the drawer
-            headerTintColor: "#fff",
-            headerTitleStyle: {
-              fontWeight: "bold",
-            },
-          }}
-        />
         <Menu.Screen
           name="Crear Actas"
           component={CreateUserScreen}
@@ -93,6 +77,22 @@ export default function App() {
             drawerIcon: ({ color }) => (
               <Ionicons name="map-outline" size={22} color={color} />
             ),
+          }}
+        />
+        <Menu.Screen
+          name="Contacto"
+          component={Contacto}
+          options={{
+            drawerIcon: ({ color }) => (
+              <Ionicons name="settings-outline" size={22} color={color} />
+            ),
+            ///this use for change color of header
+
+            //the  above lines make it work the icons in the drawer
+            headerTintColor: "#fff",
+            headerTitleStyle: {
+              fontWeight: "bold",
+            },
           }}
         />
       </Menu.Navigator>
