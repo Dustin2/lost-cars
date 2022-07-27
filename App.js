@@ -8,7 +8,7 @@ import { Colors } from "./colors";
 ///pages//
 import { Contacto } from "./pages/Contacto";
 import { Inicio } from "./pages/Inicio";
-import CreateUserScreen from "./pages/CreateUserScreen";
+import {CreateUserScreen} from "./pages/CreateUserScreen";
 import { Map } from "./pages/Map";
 
 ///components//
@@ -46,7 +46,7 @@ export default function App() {
         }}
       >
         <Menu.Screen
-          name="Actas recientes"
+          name="Actas"
           component={Inicio}
           options={{
             drawerIcon: ({ color }) => (

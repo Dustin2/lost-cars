@@ -9,6 +9,8 @@ import {
   ToastAndroid,
   Text,
 } from "react-native";
+import { Platform } from 'react-native'
+import {ViewPropTypes} from 'deprecated-react-native-prop-types';
 
 //externals dependencies
 import Textarea from "react-native-textarea";
@@ -26,7 +28,7 @@ import { database } from "../Firebase/Firebase";
 import { collection,addDoc} from "firebase/firestore";
 import { async } from "@firebase/util";
 
-const CreateUserScreen = () => {
+export function CreateUserScreen () {
   const [state, setState] = useState({
     name: "",
     //   numberActa: "",
@@ -47,7 +49,9 @@ const CreateUserScreen = () => {
   const sendData = async () => {
   await  addDoc(collection(database,'actas'),{  name: state.name,
       typeVehicle: state.typeVehicle,
-      plaque: state.plaque,}),
+      plaque: state.plaque,
+    color: state.color,
+  description: state.description,}),
     console.log("success"+state)
   }
 /// sendData
@@ -55,8 +59,8 @@ const CreateUserScreen = () => {
   //saveNewUser
   const saveNewUser = () => {
     if ( state.name === ""||
-      // state.hour === "" ||
-      // state.date === "" ||
+
+      state.date === "" ||
       state.typeVehicle === "" ||
       state.plaque === "" ||
       state.color === "" ||
@@ -72,7 +76,7 @@ const CreateUserScreen = () => {
         },
         {
           text: "OK", 
-          onPress: () => ( sendData(),ToastAndroid.show("cancel!", ToastAndroid.SHORT)),
+          onPress: () => ( sendData(),ToastAndroid.show("nice!", ToastAndroid.SHORT)),
           style: "success"}, 
           
        
@@ -93,6 +97,7 @@ const CreateUserScreen = () => {
 
   const handleConfirm = (date) => {
     setSelectedDate(date);
+    handleChangeText("date", date);
     hideDatePicker();
   };
   /// end Modal TimePickerModal
@@ -139,26 +144,27 @@ const CreateUserScreen = () => {
             ? moment(selectedDate).format("ll")
             : "Fecha no seleccionada"}{" "}
         </TextInput>
-        {/*toLocaleDateString  works for get date and ('en-GB') its the format to show date*/}
+      
 
         <TextInput editable={false} style={styles.textDate}>
           Hora:{"\n"}
           {selectedDate
             ? moment(selectedDate).format("LT")
-            : "Fecha no seleccionada"}
-          {/*toLocaleDateString  works for get date and ('en-GB') its the format to show date*/}
+            : "Hora no seleccionada"}
+         
         </TextInput>
         <Button
           title="Selecciona la fecha y hora"
           onPress={showDatePicker}
           color={Colors.secondary}
-          onValueChange={() => {}}
+       
         />
         <DateTimePickerModal
           isVisible={isDatePickerVisible}
           mode="datetime"
           onConfirm={handleConfirm}
           onCancel={hideDatePicker}
+          onPress={(value)=>{}}
         />
       </View>
 
@@ -251,7 +257,7 @@ const styles = StyleSheet.create({
   },
   inputGroup: {
     flex: 1,
-    padding: 0,
+    padding: 1,
     marginBottom: 15,
     borderBottomWidth: 1,
     borderBottomColor: "#cccccc",
@@ -302,4 +308,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CreateUserScreen;
+
