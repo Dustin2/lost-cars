@@ -4,11 +4,18 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
 import "react-native-gesture-handler";
 import { Colors } from "./colors";
+import { LogBox } from "react-native";
+
+// Ignore log notification by message:
+LogBox.ignoreLogs(["Warning: ..."]);
+
+// Ignore all log notifications:
+LogBox.ignoreAllLogs();
 
 ///pages//
 import { Contacto } from "./pages/Contacto";
 import { Inicio } from "./pages/Inicio";
-import {CreateUserScreen} from "./pages/CreateUserScreen";
+import { CreateUserScreen } from "./pages/CreateUserScreen";
 import { Map } from "./pages/Map";
 
 ///components//
@@ -25,7 +32,7 @@ import { View } from "react-native-web";
 
 const Menu = createDrawerNavigator();
 
-export default function App() {
+export default function App(props) {
   return (
     <NavigationContainer>
       <Menu.Navigator
@@ -46,7 +53,7 @@ export default function App() {
         }}
       >
         <Menu.Screen
-          name="Actas"
+          name="Actas Recientes"
           component={Inicio}
           options={{
             drawerIcon: ({ color }) => (
@@ -86,7 +93,6 @@ export default function App() {
             drawerIcon: ({ color }) => (
               <Ionicons name="settings-outline" size={22} color={color} />
             ),
-            ///this use for change color of header
 
             //the  above lines make it work the icons in the drawer
             headerTintColor: "#fff",
