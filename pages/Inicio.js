@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useLayoutEffect } from "react";
 import { Text, View, StyleSheet, ScrollView, SafeAreaView } from "react-native";
 import { ListItem, Avatar, Button } from "react-native-elements";
-import moment from "moment";
 import { Colors } from "../colors";
 //firebase
 import { database } from "../Firebase/Firebase";
@@ -24,11 +23,13 @@ export function Inicio(props) {
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       console.log("querySnapshot unsusbscribe");
+      const datos = [];
       setActa(
         querySnapshot.docs.map((doc) => ({
           id: doc.id,
           name: doc.data().name,
           colony: doc.data().colony,
+          place: doc.data().place,
           date: doc.data().date,
           typeVehicle: doc.data().typeVehicle,
           plaque: doc.data().plaque,
@@ -46,7 +47,7 @@ export function Inicio(props) {
     <View styles={styles.container}>
       <Button
         color={Colors.success}
-        title={"ADD"}
+        title={"NUEVA ACTA"}
         onPress={() => {
           ///use this change screen to add new acta
           props.navigation.navigate("Crear Actas");
@@ -56,8 +57,16 @@ export function Inicio(props) {
         <ScrollView>
           {acta.map((actas) => {
             return (
-              /// key={actas.id} use for know who component is who without repeat anyone
-              <ListItem bottomDivider key={actas.id}>
+              <ListItem
+                bottomDivider
+                key={actas.id}
+                onPress={() => {
+                  props.navigation.navigate("Mapa"),
+                    {
+                      color: actas.color,
+                    };
+                }}
+              >
                 <ListItem.Chevron />
                 <Avatar
                   rounded={true}
@@ -65,17 +74,10 @@ export function Inicio(props) {
                     uri: "https://randomuser.me/api/portraits/men/36.jpg",
                   }}
                 />
-
                 <ListItem.Content>
                   <ListItem.Title>Folio:{actas.id}</ListItem.Title>
-                  {/* <ListItem.Subtitle>{actas.moment(createdDoc).format("MMMM Do YYYY, h:mm a", "es-MX")}</ListItem.Subtitle> */}
                   <ListItem.Subtitle>{actas.name}</ListItem.Subtitle>
-                  <ListItem.Subtitle>
-                    {actas.colony.latitude}
-                  </ListItem.Subtitle>
-                  <ListItem.Subtitle>
-                    {actas.colony.longitude}
-                  </ListItem.Subtitle>
+                  <ListItem.Subtitle>{actas.place}</ListItem.Subtitle>
                   <ListItem.Subtitle>{actas.typeVehicle}</ListItem.Subtitle>
                   <ListItem.Subtitle>{actas.color}</ListItem.Subtitle>
                   <ListItem.Subtitle>{actas.plaque}</ListItem.Subtitle>

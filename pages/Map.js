@@ -19,7 +19,10 @@ import {
 } from "firebase/firestore";
 import { showActas } from "../components/proceeding/Actas";
 
-export function Map() {
+export function Map({props}) {
+  {
+    
+  }
   const [acta, setActa] = useState([]);
 
   useEffect(() => {
@@ -45,7 +48,6 @@ export function Map() {
     return unsubscribe;
   }, []);
 
-
   return (
     <View style={styles.container}>
       <MapView
@@ -58,31 +60,19 @@ export function Map() {
         }}
       >
         {acta.map((actas) => {
-     console.log(actas)
+          console.log(actas);
           return (
             <MapView.Marker
               key={actas.id}
               coordinate={actas.colony}
               pinColor="#138A36"
-              // draggable={true}
-              // onDragStart={(e) => {
-              //   console.log("Drag start", e.nativeEvent);
-              // }}
-              // onDragEnd={(e) => {
-              //   console.log("Drag end", e.nativeEvent);
-              // }}
             >
               <Callout>
-                <Text> Folio:{actas.name}</Text>
-              
+                <Text> Ultimo Folio:{actas.name}</Text>
               </Callout>
             </MapView.Marker>
           );
-        }) }
-    
-        
-        
-      
+        })}
       </MapView>
     </View>
   );

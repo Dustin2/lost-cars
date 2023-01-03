@@ -1,4 +1,4 @@
-export default{
+{
   "expo": {
     "name": "LostIN",
     "slug": "LostIN",
@@ -24,10 +24,16 @@ export default{
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "auto"
-      }
+      },
+      "package": "com.dustin2.LostIN"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "4e1f0e98-cab4-427f-9caf-1be3bd524161"
+      }
     }
   }
 }

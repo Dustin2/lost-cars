@@ -2,15 +2,13 @@ import React, { useState } from "react";
 import {
   View,
   StyleSheet,
-  TextInput,
   ScrollView,
   Alert,
-  Button,
   ToastAndroid,
-  SafeAreaView,
-  Text,
+  Button,
 } from "react-native";
 import { ViewPropTypes } from "deprecated-react-native-prop-types";
+import { TextInput } from "react-native-paper";
 
 //externals dependencies
 import Textarea from "react-native-textarea";
@@ -27,60 +25,64 @@ import { database } from "../Firebase/Firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { async } from "@firebase/util";
 
+//icons
+import { Entypo } from "@expo/vector-icons";
+
 //state initial
 const initialState = {
   name: "",
   colony: "",
+  place: "",
   date: "",
   typeVehicle: "",
   plaque: "",
   color: "",
   description: "",
+  selectedDate: "",
 };
 
 export function CreateUserScreen(props) {
   ///usestate where save temporal data
-  const [state, setState] = useState(initialState);
+  const [user, setUsers] = useState(initialState);
   ///clear state
 
   ///change value
   const handleChangeText = (name, value) => {
-    setState({ ...state, [name]: value });
+    setUsers({ ...user, [name]: value });
     //recibira un nombre y un valor estableciendo el nombre y valor recibido y actualizando
   };
 
   ///sendData to firebase
   const sendData = async () => {
     await addDoc(collection(database, "actas"), {
-      name: state.name,
-      colony: state.colony,
-      date: state.date,
-      typeVehicle: state.typeVehicle,
-      plaque: state.plaque,
-      color: state.color,
-      description: state.description,
+      name: user.name,
+      colony: user.colony,
+      place: user.place,
+      date: user.date,
+      typeVehicle: user.typeVehicle,
+      plaque: user.plaque,
+      color: user.color,
+      description: user.description,
       // createdDoc: servnewerTimestamp(),
       createdDoc: new Date(),
     });
-    setState(initialState);
+    setUsers(initialState);
 
     ///use this change screen after save data
     props.navigation.navigate("Actas Recientes");
-
-    ///serverTimestamp is used for save date to create document with firebase
   };
   /// sendData
 
   //saveNewUser
   const saveNewUser = () => {
     if (
-      state.name === "" ||
-      state.colony === "" ||
-      state.date === "" ||
-      state.typeVehicle === "" ||
-      state.plaque === "" ||
-      state.color === "" ||
-      state.description === ""
+      user.name === "" ||
+      user.colony === "" ||
+      user.date === "" ||
+      user.typeVehicle === "" ||
+      user.plaque === "" ||
+      user.color === "" ||
+      user.description === ""
     ) {
       Alert.alert(
         "Error Campos invalidos",
@@ -106,7 +108,7 @@ export function CreateUserScreen(props) {
   }; //end saveNewUser
 
   ///Modal TimePickerModal
-  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedDate, setSelectedDate] = useState("");
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -127,26 +129,25 @@ export function CreateUserScreen(props) {
   const [selectedColony, setSelectedColony] = useState();
   const updatePickerColony = (colonySel, indexColony, name, value) => {
     handleChangeText("colony", colonySel);
-    setSelectedVehicle(colonySel);
+    setSelectedColony(colonySel);
+  };
+  ///Update Colony
+  const [selectedColony1, setSelectedColony1] = useState();
+  const updatePickerColony1 = (vehicleSel, indexVehicle, name, value) => {
+    handleChangeText("typeVehicle", vehicleSel);
+    setSelectedColony1(vehicleSel);
   };
   //places for select
 
-  //Update TypeVehicle
-  const [selectedVehicle, setSelectedVehicle] = useState();
-  const updatePickerTypeVehicle = (vehicleSel, indexVehicle, name, value) => {
-    handleChangeText("typeVehicle", vehicleSel);
-    setSelectedVehicle(vehicleSel);
-  };
-
-  ///update
   return (
     <ScrollView style={styles.container}>
       {/* name Input */}
       <View>
-        <TextInput placeholder="Nombre de la persona que levanta el acta " />
         <TextInput
-        value={state.name}
-          style={styles.inputGroup}
+          value={user.name}
+          mode="outlined"
+          label="Nombre de la persona que levanta el acta "
+          activeOutlineColor={Colors.info} //use for change color around text input
           onChangeText={(value) => {
             handleChangeText("name", value);
           }}
@@ -155,34 +156,33 @@ export function CreateUserScreen(props) {
 
       {/* date Picker */}
       <View>
-        <TextInput placeholder='Fecha de los acontecimientos'  editable={false} />
         <TextInput
-          style={styles.textDate}
           editable={false}
-        
+          mode="outlined"
+          style={{ marginBottom: 10 }}
         >
-          {  selectedDate
+          {selectedDate
             ? moment(selectedDate).format("MMMM Do YYYY, h:mm a", "es-MX")
             : "Fecha no seleccionada"}
-       
         </TextInput>
 
-        <Button
-          title="Selecciona la fecha y hora"
-          onPress={showDatePicker}
-          color={Colors.secondary}
-        />
         <DateTimePickerModal
           isVisible={isDatePickerVisible}
+          value={user.date}
           mode="datetime"
           onConfirm={handleConfirm}
           onCancel={hideDatePicker}
-          onPress={(value) => {}}
+          onPress={(value) => {
+            handleChangeText("date", value);
+          }}
+        />
+        <Button
+          title="Selecciona la fecha y hora del suceso"
+          onPress={showDatePicker}
+          color={Colors.secondary}
         />
       </View>
-
       {/* colony Input */}
-      {/** remeber in features version Picker extracted core react-native and do you need installing with the repository */}
       <View>
         <Picker
           selectedValue={selectedColony}
@@ -192,6 +192,9 @@ export function CreateUserScreen(props) {
         >
           <Picker.Item label="Selecciona la colonia" color="#aaa" />
           {places.map((place) => {
+            {
+              user.place = place.NameOfLocation;
+            }
             return (
               <Picker.Item
                 key={place.place}
@@ -205,10 +208,10 @@ export function CreateUserScreen(props) {
       {/* typeVehicle Input */}
       <View>
         <Picker
-        value={state.typeVehicle}
-          selectedValue={selectedVehicle}
+          value={user.typeVehicle}
+          selectedValue={selectedColony1}
           onValueChange={(vehicleSel, indexVehicle, name, value) =>
-            updatePickerTypeVehicle(vehicleSel, indexVehicle, name, value)
+            updatePickerColony1(vehicleSel, indexVehicle, name, value)
           }
         >
           <Picker.Item
@@ -225,44 +228,49 @@ export function CreateUserScreen(props) {
       {/* plaque Input */}
       <View>
         <TextInput
-          placeholder="Placas"
-          style={styles.inputGroup}
+          label="Placas"
+          mode="outlined"
+          activeOutlineColor={Colors.info}
           onChangeText={(value) => {
             handleChangeText("plaque", value);
           }}
-          value={state.plaque}
+          value={user.plaque}
         />
       </View>
       {/* color Input */}
       <View>
         <TextInput
-          placeholder="Color de auto"
-          style={styles.inputGroup}
+          label="Color de auto"
+          mode="outlined"
+          activeOutlineColor={Colors.info}
           onChangeText={(value) => {
             handleChangeText("color", value);
           }}
-          value={state.color}
+          value={user.color}
         />
       </View>
       {/* descripcion Input */}
       <View>
-        <Textarea
-          style={styles.textarea}
-          // underlineColorAndroid={"transparent"}
-          value={state.description}
-          maxLength={1500}
-          placeholder={"Inserte la breve descripcion de lo sucedido。"}
+        <TextInput
+          style={{ marginBottom: 10 }}
+          value={user.description}
+          label="descripcion de lo sucedido"
+          mode="outlined"
+          multiline={true}
+          numberOfLines={2}
+          activeOutlineColor={Colors.info}
           onChangeText={(value) => {
             handleChangeText("description", value);
           }}
         />
       </View>
-      <View>
+      <View style={styles.inputGroup}>
         <Button
           color={Colors.success}
           title={"Guardar"}
           onPress={() => {
             saveNewUser();
+            console.log(user);
           }}
         />
       </View>
@@ -272,59 +280,17 @@ export function CreateUserScreen(props) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 35,
+    padding: 20,
     //  backgroundColor: '#d3d3d3',
   },
   inputGroup: {
     flex: 1,
     padding: 1,
-    marginBottom: 15,
+    marginBottom: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#cccccc",
     fontSize: 17,
-  },
-  loader: {
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    position: "absolute",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  containerta: {
-    flex: 1,
-    padding: 30,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  textareaContainer: {
-    height: 180,
-    padding: 3,
-    backgroundColor: "#F5FCFF",
-    lineHeight: 35,
-  },
-  textarea: {
-    textAlignVertical: "top",
-    height: 170,
-    fontSize: 17,
-    color: "#333",
-    lineHeight: 35,
-  },
-  button: {
-    borderRadius: 10,
-    paddingVertical: 15,
-    alignSelf: "center",
-    color: Colors.primary,
-    lineHeight: 35,
-  },
-  textDate: {
-    flex: 1,
-    padding: 0,
-    marginBottom: 15,
-    fontSize: 17,
-    lineHeight: 35,
+    marginBottom: 10,
+    marginEnd: 10,
   },
 });

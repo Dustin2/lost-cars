@@ -24,9 +24,6 @@ import CustomMenu from "./components/CustomMenu";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { SimpleLineIcons } from "@expo/vector-icons";
 
-{
-  /* this use for change status bar color  */
-}
 import { StatusBar } from "expo-status-bar";
 import { View } from "react-native-web";
 
