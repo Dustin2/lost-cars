@@ -150,6 +150,7 @@ export function CreateUserScreen(props) {
           activeOutlineColor={Colors.info} //use for change color around text input
           onChangeText={(value) => {
             handleChangeText("name", value);
+            {}
           }}
         />
       </View>
