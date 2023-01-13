@@ -1,9 +1,11 @@
-import { Text, StyleSheet, View } from "react-native";
+//Dependecies
+import React from "react";
+import { View, StyleSheet, Text } from "react-native";
 
 export function Contacto() {
   return (
-    <View style={styles.container}>
-      <Text>Contacto</Text>
+    <View style={{ height: 200, padding: 20 }}>
+      <Text>dhsajkhdjksajk</Text>
     </View>
   );
 }

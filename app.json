@@ -9,7 +9,7 @@
     "splash": {
       "image": "./assets/lostcars.png",
       "resizeMode": "contain",
-      "backgroundColor": "auto"
+      "backgroundColor": "#ffff"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -23,7 +23,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "auto"
+        "backgroundColor": "#ffff"
       },
       "package": "com.dustin2.LostIN"
     },

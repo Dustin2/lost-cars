@@ -7,26 +7,18 @@ import {
   ToastAndroid,
   Button,
 } from "react-native";
-import { ViewPropTypes } from "deprecated-react-native-prop-types";
 import { TextInput } from "react-native-paper";
 
 //externals dependencies
-import Textarea from "react-native-textarea";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { Picker } from "@react-native-picker/picker";
 import moment from "moment";
-
 import { places } from "../Places";
-// end externals dependencies
 
 ///Firebase end
 import { Colors } from "../colors"; //colors change color button
 import { database } from "../Firebase/Firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { async } from "@firebase/util";
-
-//icons
-import { Entypo } from "@expo/vector-icons";
 
 //state initial
 const initialState = {
@@ -39,40 +31,76 @@ const initialState = {
   color: "",
   description: "",
   selectedDate: "",
+  colorAvatar : ""
+};
+///
+const generateColor = () => {
+  const randomColor = Math.floor(Math.random() * 16777215)
+    .toString(16)
+    .padStart(6, "0");
+  return `#${randomColor}`;
 };
 
 export function CreateUserScreen(props) {
-  ///usestate where save temporal data
   const [user, setUsers] = useState(initialState);
-  ///clear state
 
+  ///Modal TimePickerModal
+  const [selectedDate, setSelectedDate] = useState("");
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+  const handleConfirm = (date) => {
+    setSelectedDate(date);
+    handleChangeText("date", date);
+    hideDatePicker();
+  };
+  /// end Modal TimePickerModal
+
+  ///Update Colony
+  const [selectedColony, setSelectedColony] = useState();
+  const updatePickerColony = (colonySel, indexColony, name, value) => {
+    handleChangeText("colony", colonySel);
+    setSelectedColony(colonySel);
+  };
+  ///Update Colony
+  const [selectedColony1, setSelectedColony1] = useState();
+  const updatePickerColony1 = (vehicleSel, indexVehicle, name, value) => {
+    handleChangeText("typeVehicle", vehicleSel);
+    setSelectedColony1(vehicleSel);
+  };
+  /// update color
+  const [selectedColor, setSelectedColor] = useState();
+  const updateColorPicker = (color, index, name, value) => {
+    handleChangeText("color", color);
+    setSelectedColor(color);
+  };
   ///change value
   const handleChangeText = (name, value) => {
     setUsers({ ...user, [name]: value });
     //recibira un nombre y un valor estableciendo el nombre y valor recibido y actualizando
   };
-
   ///sendData to firebase
   const sendData = async () => {
     await addDoc(collection(database, "actas"), {
       name: user.name,
       colony: user.colony,
-      place: user.place,
       date: user.date,
       typeVehicle: user.typeVehicle,
       plaque: user.plaque,
       color: user.color,
+      colorAvatar: generateColor(),
       description: user.description,
-      // createdDoc: servnewerTimestamp(),
       createdDoc: new Date(),
     });
     setUsers(initialState);
-
     ///use this change screen after save data
-    props.navigation.navigate("Actas Recientes");
+    props.navigation.navigate("Reportes recientes");
   };
   /// sendData
-
   //saveNewUser
   const saveNewUser = () => {
     if (
@@ -106,39 +134,6 @@ export function CreateUserScreen(props) {
       ]);
     }
   }; //end saveNewUser
-
-  ///Modal TimePickerModal
-  const [selectedDate, setSelectedDate] = useState("");
-  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  const showDatePicker = () => {
-    setDatePickerVisibility(true);
-  };
-
-  const hideDatePicker = () => {
-    setDatePickerVisibility(false);
-  };
-
-  const handleConfirm = (date) => {
-    setSelectedDate(date);
-    handleChangeText("date", date);
-    hideDatePicker();
-  };
-  /// end Modal TimePickerModal
-
-  ///Update Colony
-  const [selectedColony, setSelectedColony] = useState();
-  const updatePickerColony = (colonySel, indexColony, name, value) => {
-    handleChangeText("colony", colonySel);
-    setSelectedColony(colonySel);
-  };
-  ///Update Colony
-  const [selectedColony1, setSelectedColony1] = useState();
-  const updatePickerColony1 = (vehicleSel, indexVehicle, name, value) => {
-    handleChangeText("typeVehicle", vehicleSel);
-    setSelectedColony1(vehicleSel);
-  };
-  //places for select
-
   return (
     <ScrollView style={styles.container}>
       {/* name Input */}
@@ -150,7 +145,8 @@ export function CreateUserScreen(props) {
           activeOutlineColor={Colors.info} //use for change color around text input
           onChangeText={(value) => {
             handleChangeText("name", value);
-            {}
+            {
+            }
           }}
         />
       </View>
@@ -193,14 +189,15 @@ export function CreateUserScreen(props) {
         >
           <Picker.Item label="Selecciona la colonia" color="#aaa" />
           {places.map((place) => {
-            {
-              user.place = place.NameOfLocation;
-            }
+            // {
+            //   user.place = place.NameOfLocation;
+            //   console.log(user.place)
+            // }
             return (
               <Picker.Item
                 key={place.place}
                 label={place.NameOfLocation}
-                value={place.place}
+                value={{ place: place.place, location: place.NameOfLocation }}
               />
             );
           })}
@@ -226,6 +223,24 @@ export function CreateUserScreen(props) {
         </Picker>
       </View>
 
+      <View>
+        <Picker
+          value={user.color}
+          selectedValue={selectedColor}
+          onValueChange={(color, index, name, value) =>
+            updateColorPicker(color, index, name, value)
+          }
+        >
+          <Picker.Item
+            label="Selecciona el color del vehiculo"
+            value="disabled"
+            color="#aaa"
+          />
+          <Picker.Item label="negro" value="negro" />
+          <Picker.Item label="azul" value="azul" />
+          <Picker.Item label="rojo" value="rojo" />
+        </Picker>
+      </View>
       {/* plaque Input */}
       <View>
         <TextInput
@@ -239,7 +254,7 @@ export function CreateUserScreen(props) {
         />
       </View>
       {/* color Input */}
-      <View>
+      {/* <View>
         <TextInput
           label="Color de auto"
           mode="outlined"
@@ -249,7 +264,7 @@ export function CreateUserScreen(props) {
           }}
           value={user.color}
         />
-      </View>
+      </View> */}
       {/* descripcion Input */}
       <View>
         <TextInput
@@ -278,11 +293,9 @@ export function CreateUserScreen(props) {
     </ScrollView>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    //  backgroundColor: '#d3d3d3',
   },
   inputGroup: {
     flex: 1,

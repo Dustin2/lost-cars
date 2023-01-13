@@ -1,35 +1,28 @@
-//Dependeces
+//Dependeces//
 import { StyleSheet } from "react-native";
+import { StatusBar } from "expo-status-bar";
+
+//navigation//
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { NavigationContainer } from "@react-navigation/native";
 import "react-native-gesture-handler";
+
 import { Colors } from "./colors";
-import { LogBox } from "react-native";
 
-// Ignore log notification by message:
-LogBox.ignoreLogs(["Warning: ..."]);
-
-// Ignore all log notifications:
-LogBox.ignoreAllLogs();
-
-///pages//
-import { Contacto } from "./pages/Contacto";
-import { Inicio } from "./pages/Inicio";
-import { CreateUserScreen } from "./pages/CreateUserScreen";
-import { Map } from "./pages/Map";
+///screens//
+import { Contacto } from "./screens/Contacto";
+import { Inicio } from "./screens/Inicio";
+import { CreateUserScreen } from "./screens/CreateUserScreen";
+import { Map } from "./screens/Map";
 
 ///components//
 import CustomMenu from "./components/CustomMenu";
 //icons//
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { SimpleLineIcons } from "@expo/vector-icons";
-
-import { StatusBar } from "expo-status-bar";
-import { View } from "react-native-web";
 
 const Menu = createDrawerNavigator();
 
-export default function App(props) {
+export default function App() {
   return (
     <NavigationContainer>
       <Menu.Navigator
@@ -50,7 +43,7 @@ export default function App(props) {
         }}
       >
         <Menu.Screen
-          name="Actas Recientes"
+          name="Reportes recientes"
           component={Inicio}
           options={{
             drawerIcon: ({ color }) => (
@@ -60,7 +53,7 @@ export default function App(props) {
         />
 
         <Menu.Screen
-          name="Crear Actas"
+          name="Crear reporte"
           component={CreateUserScreen}
           options={{
             drawerIcon: ({ color }) => (
@@ -72,6 +65,7 @@ export default function App(props) {
             headerTitleStyle: {
               fontWeight: "bold",
             },
+            headerTitle: "Crear Actas",
           }}
         />
         <Menu.Screen
@@ -81,21 +75,22 @@ export default function App(props) {
             drawerIcon: ({ color }) => (
               <Ionicons name="map-outline" size={22} color={color} />
             ),
+            headerTitle: "Mapa",
           }}
         />
         <Menu.Screen
-          name="Contacto"
+          name="Indice de robos"
           component={Contacto}
           options={{
             drawerIcon: ({ color }) => (
-              <Ionicons name="settings-outline" size={22} color={color} />
+              <Ionicons name="bar-chart-sharp" size={22} color={color} />
             ),
-
             //the  above lines make it work the icons in the drawer
             headerTintColor: "#fff",
             headerTitleStyle: {
               fontWeight: "bold",
             },
+            headerTitle: "Graficas",
           }}
         />
       </Menu.Navigator>
@@ -105,6 +100,7 @@ export default function App(props) {
     </NavigationContainer>
   );
 }
+
 const styles = StyleSheet.create({
   drawerContainer: {
     backgroundColor: "#6aa3b4",

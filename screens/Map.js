@@ -17,17 +17,14 @@ import {
   querySnapshot,
   doc,
 } from "firebase/firestore";
-import { showActas } from "../components/proceeding/Actas";
 
-export function Map({props}) {
-  {
-    
-  }
+import moment from "moment";
+export function Map() {
   const [acta, setActa] = useState([]);
 
   useEffect(() => {
     const collectionRef = collection(database, "actas");
-    const q = query(collectionRef, orderBy("colony", "desc"));
+    const q = query(collectionRef, orderBy("place", "desc"));
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       console.log("querySnapshot unsusbscribe");
@@ -36,7 +33,7 @@ export function Map({props}) {
           id: doc.id,
           name: doc.data().name,
           colony: doc.data().colony,
-          date: doc.data().date,
+          date: doc.data().date.moment().format(),
           typeVehicle: doc.data().typeVehicle,
           plaque: doc.data().plaque,
           color: doc.data().color,
@@ -47,7 +44,7 @@ export function Map({props}) {
     });
     return unsubscribe;
   }, []);
-
+  console.log(date);
   return (
     <View style={styles.container}>
       <MapView
@@ -60,15 +57,15 @@ export function Map({props}) {
         }}
       >
         {acta.map((actas) => {
-          console.log(actas);
           return (
             <MapView.Marker
               key={actas.id}
-              coordinate={actas.colony}
+              coordinate={actas.colony.place}
               pinColor="#138A36"
             >
               <Callout>
-                <Text> Ultimo Folio:{actas.name}</Text>
+                <Text> Ultimo reporte {actas.name}</Text>
+                <Text>Fecha: {actas.date}</Text>
               </Callout>
             </MapView.Marker>
           );
